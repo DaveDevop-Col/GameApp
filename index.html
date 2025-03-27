@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reto Matemático</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="script.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Reto Matemático</h1>
+        
+        <div id="game-screen">
+            <div class="stats">
+                <div class="score">Puntos: <span id="score">0</span></div>
+                <div class="timer">Tiempo: <span id="timer">10</span>s</div>
+            </div>
+            
+            <div class="operation">
+                <span id="num1">5</span>
+                <span id="operator">+</span>
+                <span id="num2">3</span>
+                <span>=</span>
+                <input type="number" id="answer" placeholder="?" autofocus>
+            </div>
+            
+            <div id="feedback" class="feedback hidden"></div>
+            
+            <button id="check">Comprobar</button>
+        </div>
+        
+        <div id="game-over" class="hidden">
+            <h2>¡Se acabó el tiempo!</h2>
+            <p class="final">Puntuación: <span id="final-score">0</span></p>
+            
+            <div class="form-container">
+                <h3>Registra tus datos</h3>
+                <input type="text" id="name" placeholder="Nombre" required>
+                <input type="text" id="nickname" placeholder="Apodo" required>
+                <input type="number" id="age" placeholder="Edad" min="6" max="12" required>
+                <input type="text" id="city" placeholder="Ciudad" required>
+                <input type="text" id="school" placeholder="Colegio" required>
+                <button id="save">Guardar</button>
+            </div>
+        </div>
+        
+        <div class="leaderboard">
+            <h2>Mejores Jugadores</h2>
+            <ol id="scores"></ol>
+        </div>
+    </div>
+</body>
+</html>
