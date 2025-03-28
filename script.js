@@ -1,6 +1,6 @@
 // Importar funciones de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, query, limitToLast, orderByChild } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, query, limitToLast, orderByChild } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
 
 // Configuración de Firebase (usando Realtime Database)
 const firebaseConfig = {
