@@ -1,21 +1,28 @@
-// Importar funciones de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, query, limitToLast, orderByChild } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+// Importa las funciones necesarias de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  query, 
+  orderBy, 
+  limit, 
+  onSnapshot 
+} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
-// Configuración de Firebase (usando Realtime Database)
+// Configuración de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyACbQuylWwdjAllmfN08Z0D6ws5vGiy-n0",
-    authDomain: "gameapp-44523.firebaseapp.com",
-    databaseURL: "https://gameapp-44523-default-rtdb.firebaseio.com",
-    projectId: "gameapp-44523",
-    storageBucket: "gameapp-44523.appspot.com",
-    messagingSenderId: "232048208786",
-    appId: "1:232048208786:web:c433516fd6f712091baf4b"
+  apiKey: "AIzaSyBteFJRBR2FTi7OiwX5bc2VdegLc9rY5IA",
+  authDomain: "gameapp-60141.firebaseapp.com",
+  projectId: "gameapp-60141",
+  storageBucket: "gameapp-60141.appspot.com",
+  messagingSenderId: "934971958928",
+  appId: "1:934971958928:web:0b74dee7358a67fc6c9a15"
 };
 
-// Inicializar Firebase
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const db = getFirestore(app);
 
 // Variables del juego
 const gameState = {
@@ -188,7 +195,7 @@ function endGame() {
     elements.gameOver.classList.remove('hidden');
 }
 
-// Guardar datos del jugador - FUNCIÓN ACTUALIZADA
+// Guardar datos del jugador en Firestore
 async function savePlayerData() {
     const name = elements.nameInput.value.trim();
     const nickname = elements.nicknameInput.value.trim();
@@ -198,7 +205,7 @@ async function savePlayerData() {
     
     // Validación
     if (!name || !nickname || !age || !city || !school) {
-        showFeedback("¡Completa todos los campos!", false);
+        alert("¡Completa todos los campos!");
         return false;
     }
 
@@ -213,21 +220,14 @@ async function savePlayerData() {
     };
     
     try {
-        // Guardar en Firebase Realtime Database
-        await push(ref(database, 'scores'), playerData);
-        
-        // Mostrar mensaje de éxito
-        showFeedback("¡Datos guardados correctamente!", true);
-        
-        // Reiniciar el juego después de 1 segundo
-        setTimeout(() => {
-            resetGame();
-        }, 1000);
-        
+        // Guardar en Firestore
+        await addDoc(collection(db, "scores"), playerData);
+        alert("¡Datos guardados correctamente!");
+        resetGame();
         return true;
     } catch (error) {
         console.error("Error al guardar:", error);
-        showFeedback("Error al guardar los datos", false);
+        alert("Error al guardar los datos");
         return false;
     }
 }
@@ -262,26 +262,18 @@ function resetForm() {
     elements.schoolInput.value = "";
 }
 
-// Cargar puntuaciones desde Firebase
+// Cargar puntuaciones desde Firestore
 function loadScores() {
-    const scoresRef = ref(database, 'scores');
-    const topScoresQuery = query(scoresRef, orderByChild('score'), limitToLast(10));
+    const q = query(
+        collection(db, "scores"), 
+        orderBy("score", "desc"), 
+        limit(10)
+    );
     
-    onValue(topScoresQuery, (snapshot) => {
-        const scores = [];
-        snapshot.forEach(childSnapshot => {
-            scores.push({
-                id: childSnapshot.key,
-                ...childSnapshot.val()
-            });
-        });
-        
-        // Ordenar de mayor a menor puntuación
-        scores.sort((a, b) => b.score - a.score);
-        
-        // Mostrar en la lista
+    onSnapshot(q, (querySnapshot) => {
         elements.scoresList.innerHTML = '';
-        scores.forEach((score, index) => {
+        querySnapshot.forEach((doc, index) => {
+            const score = doc.data();
             const li = document.createElement('li');
             li.innerHTML = `
                 <span>${index + 1}. ${score.nickname}</span>
@@ -289,8 +281,6 @@ function loadScores() {
             `;
             elements.scoresList.appendChild(li);
         });
-    }, (error) => {
-        console.error("Error al cargar puntuaciones:", error);
     });
 }
 
@@ -302,7 +292,7 @@ elements.answer.addEventListener('keypress', (e) => {
     }
 });
 
-// Event listener del botón Guardar - ACTUALIZADO
+// Event listener del botón Guardar
 elements.saveBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     await savePlayerData();
